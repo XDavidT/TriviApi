@@ -1,0 +1,7 @@
+{
+    "dbConfig":{
+    "mongodb-connectionURL":"mongodb+srv://admin:VlZB1v52hySb65LO@cluster0-ecrrx.mongodb.net/test?retryWrites=true&w=majority",
+    "mongodb-trivia-db-name":"triviapi",
+    "mongodb-questions-collection":"questions"
+    }
+}
