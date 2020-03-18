@@ -112,13 +112,13 @@ getter_router.get('/count-all',(req,res)=>{
     //Get the question filtered by parameters
 getter_router.get('/questions',(req,res)=>{
     const result ={}
+    let limit = userPref['default-limit']
 
     // Default is in config file (current now is 50)
         // User can configure else, but for better performance must stay in range.
-    result['max'] = userPref['default-limit'] //TODO: limit onlt in good return
     if(req.query['limit'] !=={}){
         if(1 <= parseInt(req.query['limit']) && parseInt(req.query['limit']) <= 1000){
-            result['max'] = parseInt(req.query['limit'])
+            limit = parseInt(req.query['limit'])
         }
     }
 
@@ -133,7 +133,7 @@ getter_router.get('/questions',(req,res)=>{
         }
         else{
             //Second - we need to provide user data using the filters provided
-            checkForQuestions(req,result['max'],tokenDocument,(err_question,questions)=>{
+            checkForQuestions(req,limit,tokenDocument,(err_question,questions)=>{
                 if(err_question){
                     result['error'] = true
                     result['details'] = err_question
@@ -141,6 +141,7 @@ getter_router.get('/questions',(req,res)=>{
                 }
                 else{
                     result['error'] = false
+                    result['count'] = questions.length
                     result['result'] = questions
                 }
                 res.jsonp(result)
@@ -156,9 +157,6 @@ const checkForToken = (token,callback)=>{
         callback(undefined,null)
         return
     }
-
-
-            
     try{        
         TokenModel.findById(token,(err,foundToken)=>{
             if(err){
