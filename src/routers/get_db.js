@@ -194,7 +194,7 @@ const checkForQuestions = (req,limit,tokenDocument,callback)=>{
             difficulty:req.query['difficulty'],
             category:req.query['category']
         })
-        .limit(limit)   //Assure the amount of questions
+        .limit(limit)   //Assure the amount of questions/
         .exec((err,questions)=>{
             if(err){
                 callback(err,undefined)
