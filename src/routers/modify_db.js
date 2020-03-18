@@ -27,6 +27,4 @@ modify_router.post('/add-question',(req,res)=>{
     }
 })
 
-
-
 module.exports = modify_router

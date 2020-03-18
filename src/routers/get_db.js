@@ -173,25 +173,28 @@ const checkForToken = (token,callback)=>{
 }
 
 const checkForQuestions = (req,limit,tokenDocument,callback)=>{
+    const mongoQuery = {}
+    //Enable parameters, for mongo null in case provided nothing
 
-    //Token Validation used to provide better $nin when no token provided
-    //Since the object ['questionsIds'] cannot be access in null and return error
-    //$nin - Comparison Query Operators - when object is null no exception
-    let tokenValidation = null
+    if(tokenDocument)   //Only id's NOT IN queue of the token
+        mongoQuery['_id'] = {$nin:tokenDocument['queue']}
+
+    if(req.query['type'] !== undefined)
+        mongoQuery['type'] = req.query['type']
+
+    if(req.query['lang'] !== undefined)
+        mongoQuery['lang'] = req.query['lang']
+
+    if(req.query['difficulty'] !== undefined)
+        mongoQuery['difficulty'] = req.query['difficulty']
     
-    if(tokenDocument)
-        tokenValidation = tokenDocument['queue']
-    try{
-        //TODO: Fix the bug in 'questionsIds'
+    if(req.query['category'] !== undefined)
+        mongoQuery['category'] = req.query['category']
 
- 
-        QuestionModel.find({
-            _id:{$nin:tokenValidation},
-            type:req.query['type'],
-            lang:req.query['lang'],
-            difficulty:req.query['difficulty'],
-            category:req.query['category']
-        })
+    console.log(mongoQuery);
+    
+    try{ 
+        QuestionModel.find(mongoQuery)
         .limit(limit)   //Assure the amount of questions/
         .exec((err,questions)=>{
             if(err){
