@@ -123,7 +123,7 @@ getter_router.get('/questions',(req,res)=>{
     }
 
     //First - check for token,  if user have valid token
-    checkForToken(req.query['token'],(err_token,tokenDocuemt)=>{
+    checkForToken(req.query['token'],(err_token,tokenDocument)=>{
         if(err_token){
             result['error'] = true
             result['details'] = err_token
@@ -133,7 +133,7 @@ getter_router.get('/questions',(req,res)=>{
         }
         else{
             //Second - we need to provide user data using the filters provided
-            checkForQuestions(req,result['max'],tokenDocuemt,(err_question,questions)=>{
+            checkForQuestions(req,result['max'],tokenDocument,(err_question,questions)=>{
                 if(err_question){
                     result['error'] = true
                     result['details'] = err_question
@@ -157,44 +157,35 @@ const checkForToken = (token,callback)=>{
         return
     }
 
-    jwt.verify(token,tokenConfig['key'],(ver_err,decoded)=>{
-        if(ver_err){
-            callback(ver_err,undefined)
-            return
-        }
-        else{
-            console.log(decoded);
+
             
-            try{        
-                TokenModel.findById(token,(err,foundToken)=>{
-                    if(err){
-                        console.log(err)
-                        callback(err,undefined)
-                    }
-                    else{
-                        callback(undefined,foundToken)            
-                    }
-                })
-            }catch(err){
+    try{        
+        TokenModel.findById(token,(err,foundToken)=>{
+            if(err){
+                console.log(err)
                 callback(err,undefined)
             }
+            else{
+                callback(undefined,foundToken)            
+            }
+        })
+    }catch(err){
+        callback(err,undefined)
         }
-    })
-
-
 }
 
-const checkForQuestions = (req,limit,tokenDocuemt,callback)=>{
+const checkForQuestions = (req,limit,tokenDocument,callback)=>{
 
     //Token Validation used to provide better $nin when no token provided
     //Since the object ['questionsIds'] cannot be access in null and return error
     //$nin - Comparison Query Operators - when object is null no exception
     let tokenValidation = null
     
+    if(tokenDocument)
+        tokenValidation = tokenDocument['queue']
     try{
         //TODO: Fix the bug in 'questionsIds'
-        if(tokenDocuemt)
-            tokenValidation = tokenValidation.questionsIds
+
  
         QuestionModel.find({
             _id:{$nin:tokenValidation},
@@ -210,8 +201,8 @@ const checkForQuestions = (req,limit,tokenDocuemt,callback)=>{
             }
             else{
                 callback(undefined,questions)
-                if(tokenDocuemt)
-                    attachToToken(tokenDocuemt,questions)
+                if(tokenDocument)
+                    attachToToken(tokenDocument,questions)
             }
         })
     }catch(err){
@@ -219,22 +210,20 @@ const checkForQuestions = (req,limit,tokenDocuemt,callback)=>{
     }
 }
 
-function attachToToken(tokenDocuemt, newQuestions){
-    console.log("attachToToken")
-        
-    if(!tokenDocuemt || !newQuestions){
+function attachToToken(tokenDocument, newQuestions){
+    if(!tokenDocument || !newQuestions){
         console.log("Oops.. something wrong");
         return
     }
 
     newQuestions.forEach(question => {
-        TokenModel.updateOne({_id:tokenDocuemt['_id']},
-        {$push:{questionsIds:question['_id']}}).exec((err,_)=>{
+        TokenModel.updateOne({_id:tokenDocument['_id']},
+        {$push:{queue:question['_id']}}).exec((err,_)=>{
             if(err)
                 console.log(err)
         })
     })
 
-    console.log("finish")
+    console.log("Attach Done")
 }
 module.exports = getter_router

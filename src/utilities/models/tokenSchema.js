@@ -11,7 +11,7 @@ const tokenSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    questionsIds:Array
+    queue:Array
 },{
     collection:tokenStore
 })
