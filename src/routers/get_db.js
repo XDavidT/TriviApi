@@ -14,9 +14,7 @@ const userPref = config.get('setting')
     //Get Session TOKEN
 getter_router.get('/token',(req,res)=>{
     const result = {}
-    jwt.sign({
-        data:'Trivia'
-    },tokenConfig['key'],{expiresIn:tokenConfig['expire']},(err,token)=>{
+    jwt.sign({},tokenConfig['key'],{expiresIn:tokenConfig['expire']},(err,token)=>{
         if(err){
             result['error'] = true
             result['details'] = err
@@ -129,7 +127,6 @@ getter_router.get('/questions',(req,res)=>{
             result['details'] = err_token
             res.status(501)
             res.jsonp(result)
-            return
         }
         else{
             //Second - we need to provide user data using the filters provided
@@ -157,6 +154,17 @@ const checkForToken = (token,callback)=>{
         callback(undefined,null)
         return
     }
+    // jwt.verify(token,tokenConfig['key'],(err,status)=>{
+    //     if(err){
+    //         console.log(err)
+    //         callback(err,undefined)
+    //     }
+    //     else{
+    //         if(status.exp < Date.now.valueOf / 1000)
+    //             console.log("David")
+    //     }
+    // })
+    
     try{        
         TokenModel.findById(token,(err,foundToken)=>{
             if(err){
@@ -190,8 +198,6 @@ const checkForQuestions = (req,limit,tokenDocument,callback)=>{
     
     if(req.query['category'] !== undefined)
         mongoQuery['category'] = req.query['category']
-
-    console.log(mongoQuery);
     
     try{ 
         QuestionModel.find(mongoQuery)
