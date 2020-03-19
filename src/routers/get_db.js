@@ -154,30 +154,28 @@ const checkForToken = (token,callback)=>{
         callback(undefined,null)
         return
     }
-    // jwt.verify(token,tokenConfig['key'],(err,status)=>{
-    //     if(err){
-    //         console.log(err)
-    //         callback(err,undefined)
-    //     }
-    //     else{
-    //         if(status.exp < Date.now.valueOf / 1000)
-    //             console.log("David")
-    //     }
-    // })
-    
-    try{        
-        TokenModel.findById(token,(err,foundToken)=>{
-            if(err){
-                console.log(err)
-                callback(err,undefined)
-            }
-            else{
-                callback(undefined,foundToken)            
-            }
-        })
-    }catch(err){
-        callback(err,undefined)
+    jwt.verify(token,tokenConfig['key'],(err,status)=>{
+        if(err){
+            callback(err.name,undefined)
         }
+        else{
+            try{        
+                TokenModel.findById(token,(err,foundToken)=>{
+                    if(err){
+                        console.log(err)
+                        callback(err,undefined)
+                    }
+                    else{
+                        callback(undefined,foundToken)            
+                    }
+                })
+            }catch(err){
+                callback(err,undefined)
+                }
+        }
+    })
+    
+
 }
 
 const checkForQuestions = (req,limit,tokenDocument,callback)=>{
@@ -230,7 +228,5 @@ function attachToToken(tokenDocument, newQuestions){
                 console.log(err)
         })
     })
-
-    console.log("Attach Done")
 }
 module.exports = getter_router
