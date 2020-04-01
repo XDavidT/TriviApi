@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.urlencoded({extended: true}))
 
 const modify_router = require('./routers/modify_db')
 const getters_router = require('./routers/get_db')
