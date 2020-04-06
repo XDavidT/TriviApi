@@ -109,6 +109,10 @@ getter_router.get('/count-all',(req,res)=>{
     
     //Get the question filtered by parameters
 getter_router.get('/questions',(req,res)=>{
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With,contenttype'); // If needed
+    res.header('Access-Control-Allow-Credentials', true); // If needed
     const result ={}
     let limit = userPref['default-limit']
 

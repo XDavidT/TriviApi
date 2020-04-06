@@ -1,14 +1,19 @@
+const https = require('https')
 const express = require('express')
-const app = express()
+const fs = require('fs')
+const path = require('path')
 const bodyParser = require('body-parser')
 
+const app = express()
 app.use(bodyParser.urlencoded({extended: true}))
 
 const modify_router = require('./routers/modify_db')
 const getters_router = require('./routers/get_db')
 
+const privateKey  = fs.readFileSync(__dirname+'/utilities/ssl/server.key', 'utf8');
+const certificate = fs.readFileSync(__dirname+'/utilities/ssl/server.crt', 'utf8');
+const credentials = {key: privateKey, cert: certificate}
 
-const errorMsg ={"Error":"Invalid Api request"}
 app.use('/modify',modify_router)
 app.use('/get',getters_router)
 
@@ -22,6 +27,8 @@ app.post('*',(req,res)=>{
     res.status(501).send("error")
 })
 
-app.listen(3000,()=>{
-    console.log("Server is up in port 3000")
+const httpsServer = https.createServer(credentials,app)
+httpsServer.listen(3000,()=>{
+    console.log("Server is up in port 3000");
+    
 })
