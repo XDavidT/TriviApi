@@ -3,9 +3,11 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const bodyParser = require('body-parser')
+var cors = require('cors')
 
 const app = express()
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(cors())
 
 const modify_router = require('./routers/modify_db')
 const getters_router = require('./routers/get_db')

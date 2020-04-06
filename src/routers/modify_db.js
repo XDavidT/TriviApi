@@ -6,8 +6,6 @@ const QuestionModel = require('../utilities/models/questionSchema')
     //Add ONE question
 modify_router.post('/add-question',(req,res)=>{
     console.log(req.body);
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     try {
         QuestionModel.create(req.body,(err,document)=>{
             const result = {}
