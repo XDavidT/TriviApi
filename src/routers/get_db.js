@@ -125,7 +125,7 @@ getter_router.get('/questions',(req,res)=>{
         if(err_token){
             result['error'] = true
             result['details'] = err_token
-            res.status(501)
+            res.status(206)
             res.jsonp(result)
         }
         else{
@@ -134,7 +134,7 @@ getter_router.get('/questions',(req,res)=>{
                 if(err_question){
                     result['error'] = true
                     result['details'] = err_question
-                    res.status(501)
+                    res.status(206)
                 }
                 else{
                     result['error'] = false
@@ -156,7 +156,8 @@ const checkForToken = (token,callback)=>{
     }
     jwt.verify(token,tokenConfig['key'],(err,status)=>{
         if(err){
-            callback(err.name,undefined)
+            delete err['expiredAt'] //User don't need to know when it expire
+            callback(err,undefined)
         }
         else{
             try{        
