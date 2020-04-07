@@ -38,21 +38,22 @@ getter_router.get('/token',(req,res)=>{
 })
 
     //Get question by ID
-getter_router.get('/single-noquestion',(req,res)=>{
+getter_router.get('/single-question',(req,res)=>{
     const result = {}
-
-    if(req.query['id'] !== {}){
-        result['error'] = true
+    result['error'] = true
+    console.log(req.query);
+    
+    if(!req.query['id']){
         result['details'] = 'No ID provided'
-        res.status(501).jsonp()
+        res.jsonp(result)
+        return
     }
     
     try{
         QuestionModel.findById(req.query['id'],(err,question)=>{
             if(err){
-                result['error'] = true
                 result['details'] = err
-                res.jsonp().status(501)
+                res.jsonp(result)
             }
             else{
                 result['error'] = false
@@ -61,7 +62,8 @@ getter_router.get('/single-noquestion',(req,res)=>{
             }
         })
     } catch(err){
-        console.log("Error to get question: \n"+err)   
+        console.log("Error to get question: \n"+err)
+        res.status(501)
     }
 })
 
