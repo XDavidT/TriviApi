@@ -67,28 +67,7 @@ getter_router.get('/single-question',(req,res)=>{
     }
 })
 
-    //Get all question without query
-getter_router.get('/all-questions',(req,res)=>{
-    const result = {}
-    try{
-        QuestionModel.find({ },(err,questions)=>{
-            if(err){
-                result['error'] = true
-                result['details'] = err
-                res.status(501)
-            }
-            else{
-                result['error'] = false
-                result['result'] = questions
-            }
-            res.jsonp(result)
-        })
-    } catch(err){
-        console.log(err);
-    } 
-})
-
-    //Get the number of questions in DB
+    //Get the number of questions in DB //Not public
 getter_router.get('/count-all',(req,res)=>{
     try{
         QuestionModel.estimatedDocumentCount({},(err,count)=>{
@@ -107,6 +86,27 @@ getter_router.get('/count-all',(req,res)=>{
     }catch(err){
         console.log(err);
     }
+})
+
+    //Get all question without query //Not public
+getter_router.get('/all-questions',(req,res)=>{
+    const result = {}
+    try{
+        QuestionModel.find({ },(err,questions)=>{
+            if(err){
+                result['error'] = true
+                result['details'] = err
+                res.status(501)
+            }
+            else{
+                result['error'] = false
+                result['result'] = questions
+            }
+            res.jsonp(result)
+        })
+    } catch(err){
+        console.log(err);
+    } 
 })
     
     //Get the question filtered by parameters
@@ -150,37 +150,6 @@ getter_router.get('/questions',(req,res)=>{
     })
 })
 
-const checkForToken = (token,callback)=>{
-
-    if(token == undefined){     //User didn't provide any token
-        callback(undefined,null)
-        return
-    }
-    jwt.verify(token,tokenConfig['key'],(err,status)=>{
-        if(err){
-            delete err['expiredAt'] //User don't need to know when it expire
-            callback(err,undefined)
-        }
-        else{
-            try{        
-                TokenModel.findById(token,(err,foundToken)=>{
-                    if(err){
-                        console.log(err)
-                        callback(err,undefined)
-                    }
-                    else{
-                        callback(undefined,foundToken)            
-                    }
-                })
-            }catch(err){
-                callback(err,undefined)
-                }
-        }
-    })
-    
-
-}
-
 const checkForQuestions = (req,limit,tokenDocument,callback)=>{
     const mongoQuery = {}
     //Enable parameters, for mongo null in case provided nothing
@@ -218,6 +187,37 @@ const checkForQuestions = (req,limit,tokenDocument,callback)=>{
     }
 }
 
+//Token functions
+const checkForToken = (token,callback)=>{
+
+    if(token == undefined){     //User didn't provide any token
+        callback(undefined,null)
+        return
+    }
+    jwt.verify(token,tokenConfig['key'],(err,status)=>{
+        if(err){
+            delete err['expiredAt'] //User don't need to know when it expire
+            callback(err,undefined)
+        }
+        else{
+            try{        
+                TokenModel.findById(token,(err,foundToken)=>{
+                    if(err){
+                        console.log(err)
+                        callback(err,undefined)
+                    }
+                    else{
+                        callback(undefined,foundToken)            
+                    }
+                })
+            }catch(err){
+                callback(err,undefined)
+                }
+        }
+    })
+    
+
+}
 function attachToToken(tokenDocument, newQuestions){
     if(!tokenDocument || !newQuestions){
         console.log("Oops.. something wrong");
