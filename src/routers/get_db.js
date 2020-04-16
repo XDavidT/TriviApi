@@ -108,6 +108,26 @@ getter_router.get('/all-questions',(req,res)=>{
         console.log(err);
     } 
 })
+getter_router.get('/questions-to-datatable',(req,res)=>{
+    // console.log(req.query);
+    const filterQuery = {}
+
+    try{
+        console.log(FilterQuery(req.query['columns']))
+        // const cols = req.query['columns']
+        // console.log(cols);
+
+        // console.log("Test" + cols[0]);
+        
+        // req.query['columns'].forEach(([key,value])=>{
+        //     console.log(key);
+        // })
+        
+    } catch(err){
+        console.log(err);
+    }
+
+})
     
     //Get the question filtered by parameters
 getter_router.get('/questions',(req,res)=>{
@@ -231,5 +251,8 @@ function attachToToken(tokenDocument, newQuestions){
                 console.log(err)
         })
     })
+}
+const FilterQuery = (cols) => {
+//TODO:Fill
 }
 module.exports = getter_router
