@@ -109,20 +109,37 @@ getter_router.get('/all-questions',(req,res)=>{
     } 
 })
 getter_router.get('/questions-to-datatable',(req,res)=>{
-    // console.log(req.query);
-    const filterQuery = {}
+    const result ={}
 
+    //Limit
+    const limit = Number(req.query['length'])
+
+    //Skip
+    const skip = Number(req.query['start'])
+
+    //Order By
+    const orderBy = {}
+    var orderType = 1
+    if(req.query['order'][0]['dir'] == 'desc') {orderType = -1}
+        orderBy[req.query['columns'][req.query['order'][0]['column']]['data']] = orderType
+    
+    //Filter By
+    const filterBy = FilterQuery(req.query['columns'])
+    
     try{
-        console.log(FilterQuery(req.query['columns']))
-        // const cols = req.query['columns']
-        // console.log(cols);
-
-        // console.log("Test" + cols[0]);
-        
-        // req.query['columns'].forEach(([key,value])=>{
-        //     console.log(key);
-        // })
-        
+        QuestionModel
+            .find(filterBy)
+            .skip(skip)
+            .limit(limit)
+            .sort(orderBy)
+            .exec((err,found)=>{
+                if(err){
+                    result['details'] = err
+                }else{
+                    result['data'] = found
+                }
+                res.jsonp(result)
+        })
     } catch(err){
         console.log(err);
     }
@@ -252,7 +269,20 @@ function attachToToken(tokenDocument, newQuestions){
         })
     })
 }
+
 const FilterQuery = (cols) => {
-//TODO:Fill
+    const filterQuery ={}
+    
+    for(var i = 0 ; i< cols.length ; i++){
+        if(cols[i]['search']['value'] != '')
+            filterQuery[cols[i]['data']] = cols[i]['search']['value']
+    }
+    
+    //If Question search was made, use regex search
+    if(filterQuery['question'] && filterQuery['question'] != ''){
+        const tempQuestionHolder = filterQuery['question']
+        filterQuery['question'] = {$regex:tempQuestionHolder}
+    }
+    return filterQuery
 }
 module.exports = getter_router
