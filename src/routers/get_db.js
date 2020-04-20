@@ -150,8 +150,10 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
                 result['details'] = err
             }else{
                 result['data'] = found[0]['data']
-                result['recordsFiltered'] = found[0]['filterCount'][0]['count']
-                result['recordsTotal'] = found[0]['totalCount'][0]['count']
+                if(found[0]['filterCount'][0])
+                    result['recordsFiltered'] = found[0]['filterCount'][0]['count']
+                if(found[0]['totalCount'][0])
+                    result['recordsTotal'] = found[0]['totalCount'][0]['count']
             }
             res.jsonp(result)
             
@@ -294,11 +296,14 @@ const FilterQuery = (cols) => {
             filterQuery[cols[i]['data']] = cols[i]['search']['value']
     }
     
+    //If difficult is needed, convert to INT
+    if(filterQuery['difficulty'] && filterQuery['difficulty'] != '')
+        filterQuery['difficulty'] = Number(filterQuery['difficulty'])
+
     //If Question search was made, use regex search
-    if(filterQuery['question'] && filterQuery['question'] != ''){
-        const tempQuestionHolder = filterQuery['question']
-        filterQuery['question'] = {$regex:tempQuestionHolder}
-    }
+    if(filterQuery['question'] && filterQuery['question'] != '')
+        filterQuery['question'] = {$regex:filterQuery['question']}
+    
     return filterQuery
 }
 
