@@ -304,6 +304,13 @@ const FilterQuery = (cols) => {
     if(filterQuery['question'] && filterQuery['question'] != '')
         filterQuery['question'] = {$regex:filterQuery['question']}
     
+    //Convert Date format and find only greater then {$date}
+    if(filterQuery['time_added'] && filterQuery['time_added'] != ''){
+        const dateConfig = filterQuery['time_added'].split("/")
+        var dateObject = new Date(+dateConfig[2], dateConfig[1] - 1, +dateConfig[0])
+        filterQuery['time_added'] = {$gte: dateObject}
+    }
+    
     return filterQuery
 }
 
