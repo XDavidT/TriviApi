@@ -108,6 +108,8 @@ getter_router.get('/all-questions',(req,res)=>{
         console.log(err);
     } 
 })
+
+
 getter_router.get('/questions-to-datatable',(req,res)=>{
     const result ={}
 
@@ -127,18 +129,32 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
     const filterBy = FilterQuery(req.query['columns'])
     
     try{
-        QuestionModel
-            .find(filterBy)
-            .skip(skip)
-            .limit(limit)
-            .sort(orderBy)
-            .exec((err,found)=>{
-                if(err){
-                    result['details'] = err
-                }else{
-                    result['data'] = found
-                }
-                res.jsonp(result)
+        QuestionModel.
+            aggregate([{
+                $facet:
+                    {
+                        //Data to table
+                        "data":[
+                            {$match:filterBy},
+                            {$skip:skip},
+                            {$limit:limit},
+                            {$sort:orderBy}
+                            ],
+                        //Count the number of result after filtered
+                        "filterCount":[{$match:filterBy}, {$group:{_id:null,count:{$sum:1}}}],
+                        //Count total in collection
+                        "totalCount":[{$group:{_id:null,count:{$sum:1}}}]                        
+                    }
+        }]).exec((err,found)=>{
+            if(err){
+                result['details'] = err
+            }else{
+                result['data'] = found[0]['data']
+                result['recordsFiltered'] = found[0]['filterCount'][0]['count']
+                result['recordsTotal'] = found[0]['totalCount'][0]['count']
+            }
+            res.jsonp(result)
+            
         })
     } catch(err){
         console.log(err);
@@ -285,4 +301,16 @@ const FilterQuery = (cols) => {
     }
     return filterQuery
 }
+
+//Count Helper
+const countQuestions = new Promise((res,rej)=> {
+    QuestionModel.estimatedDocumentCount({},(err,count)=>{
+        if(err){
+            rej(-1)
+        } else{
+            res(count)
+        }
+    })
+})
+
 module.exports = getter_router
