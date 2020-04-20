@@ -307,15 +307,4 @@ const FilterQuery = (cols) => {
     return filterQuery
 }
 
-//Count Helper
-const countQuestions = new Promise((res,rej)=> {
-    QuestionModel.estimatedDocumentCount({},(err,count)=>{
-        if(err){
-            rej(-1)
-        } else{
-            res(count)
-        }
-    })
-})
-
 module.exports = getter_router
