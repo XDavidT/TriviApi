@@ -123,7 +123,7 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
     const orderBy = {}
     var orderType = 1
     if(req.query['order'][0]['dir'] == 'desc') {orderType = -1}
-        orderBy[req.query['columns'][req.query['order'][0]['column']]['data']] = orderType
+    orderBy[req.query['columns'][req.query['order'][0]['column']]['data']] = orderType
     
     //Filter By
     const filterBy = FilterQuery(req.query['columns'])
@@ -135,10 +135,10 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
                     {
                         //Data to table
                         "data":[
+                            {$sort:orderBy},
                             {$match:filterBy},
                             {$skip:skip},
-                            {$limit:limit},
-                            {$sort:orderBy}
+                            {$limit:limit}
                             ],
                         //Count the number of result after filtered
                         "filterCount":[{$match:filterBy}, {$group:{_id:null,count:{$sum:1}}}],
