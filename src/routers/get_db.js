@@ -135,8 +135,8 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
                     {
                         //Data to table
                         "data":[
-                            {$sort:orderBy},
                             {$match:filterBy},
+                            {$sort:orderBy},
                             {$skip:skip},
                             {$limit:limit}
                             ],
