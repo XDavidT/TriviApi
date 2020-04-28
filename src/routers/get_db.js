@@ -109,7 +109,7 @@ getter_router.get('/all-questions',(req,res)=>{
     } 
 })
 
-
+//This request provide data to view on site
 getter_router.get('/questions-to-datatable',(req,res)=>{
     const result ={}
 
@@ -290,7 +290,9 @@ function attachToToken(tokenDocument, newQuestions){
 
 const FilterQuery = (cols) => {
     const filterQuery ={}
-    
+    filterQuery['pending'] = { $exists: false }
+
+
     for(var i = 0 ; i< cols.length ; i++){
         if(cols[i]['search']['value'] != '')
             filterQuery[cols[i]['data']] = cols[i]['search']['value']
