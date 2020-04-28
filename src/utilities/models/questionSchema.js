@@ -47,7 +47,11 @@ const questionSchema = new mongoose.Schema({
         required:true,
         trim:true
     },
-    wrongAnswer:[String]
+    wrongAnswer:{
+        type:[String],
+        default:{}
+    },
+    pending:Boolean
 },{
     collection:questionsCollection
 })

@@ -5,8 +5,9 @@ const QuestionModel = require('../utilities/models/questionSchema')
 // POST Requests
     //Add ONE question
 modify_router.post('/add-question',(req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     try {
+        req.body['pending'] = true
         QuestionModel.create(req.body,(err,document)=>{
             const result = {}
             if(err){
