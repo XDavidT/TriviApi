@@ -49,7 +49,7 @@ const questionSchema = new mongoose.Schema({
     },
     wrongAnswer:{
         type:[String],
-        default:{undefined}
+        default:undefined
     },
     pending:Boolean
 },{
