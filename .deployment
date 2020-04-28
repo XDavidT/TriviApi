@@ -1,3 +1,0 @@
-[config]
-command = npm i
-command = src/app.js
