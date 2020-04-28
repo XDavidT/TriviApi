@@ -1,6 +1,6 @@
 {
     "version":1.0,
-    "site":"triviabit.com",
+    "site":"https://triviabit.com",
     "dbConfig":{
     "mongodb-trivia-db-name":"triviapi",
     "mongodb-questions-collection":"questions",
