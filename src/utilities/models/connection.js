@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
 const config = require('config')
 
-// Get configration from config.json file
+// Get collection name
 const dbConfig = config.get('dbConfig')
 
-const connectionUrl = dbConfig['mongodb-connectionURL']
+//Build connection for MongoDB  //next line is relevant for atlas server
+const connectionUrl = 'mongodb+srv://' + process.env.DB_USER +':'+ process.env.DB_PASS +'@'+ process.env.DB_HOST
 const triviApiDb =  dbConfig['mongodb-trivia-db-name']
 
 const connection = mongoose.createConnection(connectionUrl,{

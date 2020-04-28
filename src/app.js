@@ -1,3 +1,4 @@
+require('dotenv').config()
 const https = require('https')
 const express = require('express')
 const fs = require('fs')
@@ -17,11 +18,11 @@ app.use('/get',getters_router)
 
 
 app.get('*',(req,res)=>{
-    console.log("General Error!");
+    console.log("Someone try to GET.. look that:"+req.query);
     res.status(501).send("error")
 })
 app.post('*',(req,res)=>{
-    console.log("General Error!");
+    console.log("Someone try to POST.. look that:"+req.query);
     res.status(501).send("error")
 })
 
