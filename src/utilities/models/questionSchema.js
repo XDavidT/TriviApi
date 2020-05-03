@@ -51,7 +51,11 @@ const questionSchema = new mongoose.Schema({
         type:[String],
         default:undefined
     },
-    pending:Boolean
+    pending:Boolean,
+    checkSum:{
+        type:String,
+        required:false
+    }
 },{
     collection:questionsCollection
 })
