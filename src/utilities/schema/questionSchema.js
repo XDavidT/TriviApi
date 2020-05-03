@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const config = require('config')
-const mongodbConnection = require('./connection')
+const mongodbConnection = require('../models/connection')
 
 // Get configration from config.json file
 const dbConfig = config.get('dbConfig')
@@ -33,9 +33,8 @@ const questionSchema = new mongoose.Schema({
         max:3
     },
     category:{
-        type:String,
-        required:true,
-        lowercase: true
+        type:Number,
+        required:true
     },
     question:{
         type:String,

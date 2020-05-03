@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const express = require('express')
 const getter_router = new express.Router()
-const QuestionModel = require('../utilities/models/questionSchema')
+const QuestionModel = require('../utilities/schema/questionSchema')
 const TokenModel = require('../utilities/models/tokenSchema')
 const config = require('config')
 

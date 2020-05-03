@@ -4,6 +4,7 @@
     "dbConfig":{
     "mongodb-trivia-db-name":"triviapi",
     "mongodb-questions-collection":"questions",
+    "mongodb-category-collection":"categories",
     "mongodb-token-collection":"tokens-store"
     },
     "setting":{
@@ -12,5 +13,29 @@
     "token":{
         "key":"TriviaGame",
         "expire":"1h"
-    }
+    },
+    "categories":[
+        {"_id":1,"name":"General Knowledge"},
+        {"_id":2,"name":"Books"},
+        {"_id":3,"name":"Film"},
+        {"_id":4,"name":"Music"},
+        {"_id":5,"name":"Television"},
+        {"_id":6,"name":"Video Games"},
+        {"_id":7,"name":"Science & Nature"},
+        {"_id":8,"name":"Computers"},
+        {"_id":9,"name":"Mathematics"},
+        {"_id":10,"name":"Mythology"},
+        {"_id":11,"name":"Sports"},
+        {"_id":12,"name":"Geography"},
+        {"_id":13,"name":"History"},
+        {"_id":14,"name":"Politics"},
+        {"_id":15,"name":"Art"},
+        {"_id":16,"name":"Celebrities"},
+        {"_id":17,"name":"Animals"},
+        {"_id":18,"name":"Vehicles"},
+        {"_id":19,"name":"Comics"},
+        {"_id":20,"name":"Gadgets"},
+        {"_id":21,"name":"Japanese Anime & Manga"},
+        {"_id":22,"name":"Cartoon & Animations"}
+    ]
 }

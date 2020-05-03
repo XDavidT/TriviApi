@@ -1,7 +1,7 @@
 const express = require('express')
 const modify_router = new express.Router()
 var SHA1 = require('crypto-js/sha1')
-const QuestionModel = require('../utilities/models/questionSchema')
+const QuestionModel = require('../utilities/schema/questionSchema')
 
 // POST Requests
     //Add ONE question
