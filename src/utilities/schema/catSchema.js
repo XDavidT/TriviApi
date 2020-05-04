@@ -13,6 +13,7 @@ const catSchema = new mongoose.Schema({
         required:true
     },
 },{
+    versionKey: false,
     collection:categoryCollection
 })
 
