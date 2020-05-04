@@ -145,12 +145,12 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
                             ],
                         //Count the number of result after filtered
                         "filterCount":[{$match:filterBy}, {$group:{_id:null,count:{$sum:1}}}],
-                        //Count total in collection
-                        "totalCount":[{$group:{_id:null,count:{$sum:1}}}]                        
+                        //Count total in collection (Not include pending)
+                        "totalCount":[{$match:{pending:{ $exists: false }}},{$group:{_id:null,count:{$sum:1}}}]                        
                     }
         }]).exec((err,found)=>{
             if(err){
-                result['details'] = err
+                throw (err)
             }else{
                 result['data'] = found[0]['data']
                 if(found[0]['filterCount'][0])
@@ -159,10 +159,11 @@ getter_router.get('/questions-to-datatable',(req,res)=>{
                     result['recordsTotal'] = found[0]['totalCount'][0]['count']
             }
             res.jsonp(result)
-            
         })
     } catch(err){
-        console.log(err);
+        result['error'] = true
+        result['details'] = err
+        res.jsonp(result)
     }
 
 })
