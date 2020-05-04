@@ -16,7 +16,7 @@ app.use('/modify',modify_router)
 app.use('/get',getters_router)
 
 // Only need to run at the start of the application
-// console.log(syncCat());
+// console.log(syncCat())
 
 app.get('*',(req,res)=>{
     console.log("Someone try to GET.. look that:"+req.query);

@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken')
+const config = require('config')
 const express = require('express')
 const getter_router = new express.Router()
+
+//Schemas
 const QuestionModel = require('../utilities/schema/questionSchema')
-const TokenModel = require('../utilities/models/tokenSchema')
-const config = require('config')
+const TokenModel = require('../utilities/schema/tokenSchema')
+const CategoryModel = require('../utilities/schema/catSchema')
 
 // Get configration from config.json file
 const tokenConfig = config.get('token')
@@ -109,7 +112,7 @@ getter_router.get('/all-questions',(req,res)=>{
     } 
 })
 
-//This request provide data to view on site
+    //This request provide data to view on site
 getter_router.get('/questions-to-datatable',(req,res)=>{
     const result ={}
 
@@ -203,6 +206,25 @@ getter_router.get('/questions',(req,res)=>{
         }
 
     })
+})
+
+getter_router.get('/categories',(_,res)=>{
+    const result = {}    
+    try{
+        CategoryModel.find((err,categories)=>{
+            if(err){
+                throw(err)
+            }else{
+                result['error'] = false
+                result['result'] = categories
+                res.jsonp(result)
+            }
+        })
+    }catch(err){
+        result['error'] = true
+        result['details'] = err
+        res.jsonp(result)
+    }
 })
 
 const checkForQuestions = (req,limit,tokenDocument,callback)=>{
