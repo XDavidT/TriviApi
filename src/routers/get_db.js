@@ -112,61 +112,6 @@ getter_router.get('/all-questions',(req,res)=>{
     } 
 })
 
-    //This request provide data to view on site
-getter_router.get('/questions-to-datatable',(req,res)=>{
-    const result ={}
-
-    //Limit
-    const limit = Number(req.query['length'])
-
-    //Skip
-    const skip = Number(req.query['start'])
-
-    //Order By
-    const orderBy = {}
-    var orderType = 1
-    if(req.query['order'][0]['dir'] == 'desc') {orderType = -1}
-    orderBy[req.query['columns'][req.query['order'][0]['column']]['data']] = orderType
-    
-    //Filter By
-    const filterBy = FilterQuery(req.query['columns'])
-    
-    try{
-        QuestionModel.
-            aggregate([{
-                $facet:
-                    {
-                        //Data to table
-                        "data":[
-                            {$match:filterBy},
-                            {$sort:orderBy},
-                            {$skip:skip},
-                            {$limit:limit}
-                            ],
-                        //Count the number of result after filtered
-                        "filterCount":[{$match:filterBy}, {$group:{_id:null,count:{$sum:1}}}],
-                        //Count total in collection (Not include pending)
-                        "totalCount":[{$match:{pending:{ $exists: false }}},{$group:{_id:null,count:{$sum:1}}}]                        
-                    }
-        }]).exec((err,found)=>{
-            if(err){
-                throw (err)
-            }else{
-                result['data'] = found[0]['data']
-                if(found[0]['filterCount'][0])
-                    result['recordsFiltered'] = found[0]['filterCount'][0]['count']
-                if(found[0]['totalCount'][0])
-                    result['recordsTotal'] = found[0]['totalCount'][0]['count']
-            }
-            res.jsonp(result)
-        })
-    } catch(err){
-        result['error'] = true
-        result['details'] = err
-        res.jsonp(result)
-    }
-
-})
     
     //Get the question filtered by parameters
 getter_router.get('/questions',(req,res)=>{
@@ -309,34 +254,6 @@ function attachToToken(tokenDocument, newQuestions){
                 console.log(err)
         })
     })
-}
-
-const FilterQuery = (cols) => {
-    const filterQuery ={}
-    filterQuery['pending'] = { $exists: false }
-
-
-    for(var i = 0 ; i< cols.length ; i++){
-        if(cols[i]['search']['value'] != '')
-            filterQuery[cols[i]['data']] = cols[i]['search']['value']
-    }
-    
-    //If difficult is needed, convert to INT
-    if(filterQuery['difficulty'] && filterQuery['difficulty'] != '')
-        filterQuery['difficulty'] = Number(filterQuery['difficulty'])
-
-    //If Question search was made, use regex search
-    if(filterQuery['question'] && filterQuery['question'] != '')
-        filterQuery['question'] = {$regex:filterQuery['question']}
-    
-    //Convert Date format and find only greater then {$date}
-    if(filterQuery['time_added'] && filterQuery['time_added'] != ''){
-        const dateConfig = filterQuery['time_added'].split("/")
-        var dateObject = new Date(+dateConfig[2], dateConfig[1] - 1, +dateConfig[0])
-        filterQuery['time_added'] = {$gte: dateObject}
-    }
-    
-    return filterQuery
 }
 
 module.exports = getter_router
