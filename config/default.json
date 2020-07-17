@@ -5,7 +5,8 @@
     "mongodb-trivia-db-name":"triviapi",
     "mongodb-questions-collection":"questions",
     "mongodb-category-collection":"categories",
-    "mongodb-token-collection":"tokens-store"
+    "mongodb-token-collection":"tokens-store",
+    "mongodb-adminToken-collection":"admin-token"
     },
     "setting":{
         "default-limit":50

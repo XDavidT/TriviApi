@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const config = require('config')
 const express = require('express')
 const getter_router = new express.Router()
@@ -6,6 +7,7 @@ const getter_router = new express.Router()
 //Schemas
 const QuestionModel = require('../utilities/schema/questionSchema')
 const TokenModel = require('../utilities/schema/tokenSchema')
+const AdminModel = require('../utilities/schema/adminSchema')
 const CategoryModel = require('../utilities/schema/catSchema')
 
 // Get configration from config.json file
@@ -38,6 +40,33 @@ getter_router.get('/token',(req,res)=>{
             })
         }
     })
+})
+
+    //Get Admin token to manage questions (approve/reject etc..)
+getter_router.get('/admin-key',(req,res)=>{
+    const result = {}
+    if( req.query.key != process.env.ADMIN_SECRET){
+        res.jsonp("Wrong key")
+    }
+    else if(!req.query.name){
+        res.jsonp("No nickname")
+    }
+    else{
+        bcrypt.genSalt(1, function(err, salt) {
+            bcrypt.hash(process.env.ADMIN_SECRET, salt, function(err, key) {
+                AdminModel.create({_id:req.query.name, key:key},(_err,adminTok)=>{
+                    if(err || _err){
+                        result['error'] = true
+                        result['details'] = _err
+                    }else{
+                        result['error'] = false
+                        result['result'] = adminTok
+                    }
+                    res.jsonp(result)
+                })
+            })
+        })
+    }
 })
 
     //Get question by ID

@@ -27,6 +27,6 @@ app.post('*',(req,res)=>{
     res.redirect(config.get('site'))
 })
 
-app.listen(80,()=>{
-    console.log("Server is up in port 80")
+app.listen(4000,()=>{
+    console.log("Server is up in port 4000")
 })
